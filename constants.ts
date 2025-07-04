@@ -1,0 +1,180 @@
+
+import { Artisan, Customer, UserRole, ServiceCategory, JobRequest, JobStatus, Bid, Review } from './types';
+
+export let sampleCustomers: Customer[] = [
+  { id: 'cust1', name: 'Fatima Zahra', email: 'customer@test.com', phone: '0661-123456', password: 'password', avatarUrl: 'https://i.pravatar.cc/150?u=cust1', role: UserRole.Customer },
+  { id: 'cust2', name: 'Amine Bensouda', email: 'amine@test.com', phone: '0662-234567', password: 'password', avatarUrl: 'https://i.pravatar.cc/150?u=cust2', role: UserRole.Customer },
+  { id: 'cust3', name: 'Leila Alaoui', email: 'leila@test.com', phone: '0663-345678', password: 'password', avatarUrl: 'https://i.pravatar.cc/150?u=cust3', role: UserRole.Customer },
+];
+
+const sampleReviews: Review[] = [
+    { id: 'rev1', customerId: 'cust2', customerName: 'Amine Bensouda', avatarUrl: 'https://i.pravatar.cc/150?u=cust2', rating: 5, comment: 'Youssef was fantastic! Very professional, arrived on time, and fixed the issue quickly. Highly recommend.', timestamp: Date.now() - 1000 * 60 * 60 * 24 * 3 },
+    { id: 'rev2', customerId: 'cust3', customerName: 'Leila Alaoui', avatarUrl: 'https://i.pravatar.cc/150?u=cust3', rating: 4, comment: 'Good work, but was a little late. The final result is perfect though.', timestamp: Date.now() - 1000 * 60 * 60 * 24 * 10 },
+    { id: 'rev3', customerId: 'cust2', customerName: 'Amine Bensouda', avatarUrl: 'https://i.pravatar.cc/150?u=cust2', rating: 5, comment: 'Excellent electrician, very knowledgeable and clean work. Will hire again.', timestamp: Date.now() - 1000 * 60 * 60 * 24 * 5 },
+];
+
+
+export let sampleArtisans: Artisan[] = [
+  {
+    id: 'art1',
+    name: 'Youssef El Fassi',
+    email: 'artisan@test.com',
+    phone: '0651-112233',
+    password: 'password',
+    avatarUrl: 'https://i.pravatar.cc/150?u=art1',
+    role: UserRole.Artisan,
+    specialization: ServiceCategory.Plumbing,
+    rating: 4.8,
+    jobsCompleted: 127,
+    isVerified: true,
+    portfolio: [
+      'https://picsum.photos/seed/plumb1/400/300',
+      'https://picsum.photos/seed/plumb2/400/300',
+      'https://picsum.photos/seed/plumb3/400/300',
+      'https://picsum.photos/seed/plumb4/400/300',
+    ],
+    location: 'Casablanca',
+    reviews: [sampleReviews[0], sampleReviews[1]],
+    totalEarnings: 145200,
+    acceptanceRate: 92,
+  },
+  {
+    id: 'art2',
+    name: 'Ahmed Bennani',
+    email: 'ahmed@test.com',
+    phone: '0652-445566',
+    password: 'password',
+    avatarUrl: 'https://i.pravatar.cc/150?u=art2',
+    role: UserRole.Artisan,
+    specialization: ServiceCategory.Electricity,
+    rating: 4.9,
+    jobsCompleted: 215,
+    isVerified: true,
+    portfolio: [
+        'https://picsum.photos/seed/elec1/400/300',
+        'https://picsum.photos/seed/elec2/400/300',
+    ],
+    location: 'Rabat',
+    reviews: [sampleReviews[2]],
+    totalEarnings: 280500,
+    acceptanceRate: 95,
+  },
+  {
+    id: 'art3',
+    name: 'Karim Alaoui',
+    email: 'karim@test.com',
+    phone: '0653-778899',
+    password: 'password',
+    avatarUrl: 'https://i.pravatar.cc/150?u=art3',
+    role: UserRole.Artisan,
+    specialization: ServiceCategory.Painting,
+    rating: 4.6,
+    jobsCompleted: 88,
+    isVerified: false,
+    portfolio: [],
+    location: 'Marrakech',
+    reviews: [],
+    totalEarnings: 75400,
+    acceptanceRate: 75,
+  },
+    {
+    id: 'art4',
+    name: 'Said Tazi',
+    email: 'said@test.com',
+    phone: '0654-998877',
+    password: 'password',
+    avatarUrl: 'https://i.pravatar.cc/150?u=art4',
+    role: UserRole.Artisan,
+    specialization: ServiceCategory.Plumbing,
+    rating: 4.7,
+    jobsCompleted: 95,
+    isVerified: true,
+    portfolio: [],
+    location: 'Casablanca',
+    reviews: [],
+    totalEarnings: 98300,
+    acceptanceRate: 88,
+  },
+];
+
+const bidsForJob1: Bid[] = [
+    { id: 'bid1', artisanId: 'art1', jobRequestId: 'job1', amount: 220, timestamp: Date.now() - 1000 * 60 * 5 },
+    { id: 'bid2', artisanId: 'art4', jobRequestId: 'job1', amount: 200, timestamp: Date.now() - 1000 * 60 * 2 },
+];
+
+const bidsForJob2: Bid[] = [
+    { id: 'bid3', artisanId: 'art2', jobRequestId: 'job2', amount: 450, timestamp: Date.now() - 1000 * 60 * 15 },
+];
+
+
+export let sampleJobRequests: JobRequest[] = [
+  {
+    id: 'job1',
+    customerId: 'cust1',
+    category: ServiceCategory.Plumbing,
+    description: 'Leaky faucet in the kitchen sink. It has been dripping for two days and needs to be fixed urgently. Please bring standard tools.',
+    imageUrl: 'https://picsum.photos/seed/leak1/600/400',
+    location: 'Maarif, Casablanca',
+    proposedPrice: 200,
+    status: JobStatus.Open,
+    createdAt: Date.now() - 1000 * 60 * 30,
+    bids: bidsForJob1,
+    chatHistory: [],
+    paymentStatus: 'unpaid',
+    escrowAmount: 0,
+  },
+  {
+    id: 'job2',
+    customerId: 'cust1',
+    category: ServiceCategory.Electricity,
+    description: 'Install 3 new ceiling light fixtures in the living room. The old ones have been removed. Wiring is in place.',
+    location: 'Hay Riad, Rabat',
+    proposedPrice: 400,
+    status: JobStatus.Open,
+    createdAt: Date.now() - 1000 * 60 * 60 * 2,
+    bids: bidsForJob2,
+    chatHistory: [
+        { id: 'chat1', sender: 'user', text: 'Hi, are you available tomorrow?' },
+        { id: 'chat2', sender: 'model', text: 'Bien sûr! I can be there in the afternoon. Does that work for you?' },
+    ],
+    paymentStatus: 'unpaid',
+    escrowAmount: 0,
+  },
+  {
+    id: 'job3',
+    customerId: 'cust1',
+    category: ServiceCategory.Painting,
+    description: 'Repaint one bedroom wall (approx 12 square meters). Color will be provided.',
+    location: 'Gueliz, Marrakech',
+    proposedPrice: 500,
+    status: JobStatus.Completed,
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 5,
+    bids: [],
+    acceptedArtisanId: 'art3',
+    chatHistory: [],
+    paymentStatus: 'released',
+    escrowAmount: 500,
+    isReviewed: true,
+  },
+  {
+    id: 'job4',
+    customerId: 'cust2',
+    category: ServiceCategory.AC,
+    description: 'My AC unit is making a loud noise and not cooling properly.',
+    location: 'Agdal, Rabat',
+    proposedPrice: 350,
+    status: JobStatus.Disputed,
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 10,
+    bids: [],
+    acceptedArtisanId: 'art2',
+    chatHistory: [],
+    paymentStatus: 'released',
+    escrowAmount: 350,
+    isReviewed: false,
+    dispute: {
+        reason: 'The artisan claimed to have fixed the AC, but it stopped cooling again after just one day. He is now unresponsive.',
+        raisedAt: Date.now() - 1000 * 60 * 60 * 24,
+        status: 'open',
+    }
+  },
+];

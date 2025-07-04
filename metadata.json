@@ -1,0 +1,6 @@
+{
+  "name": "M3allem Express",
+  "description": "An application to connect users with verified artisans for home repairs and services in Morocco, allowing direct price negotiation, inspired by the inDrive model.",
+  "requestFramePermissions": [],
+  "prompt": ""
+}
