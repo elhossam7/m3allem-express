@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Artisan, JobRequest, ServiceCategory, JobStatus, Customer, Notification } from '../../types';
+import { Artisan, JobRequest, JobStatus, Customer, Notification } from '../../types';
 import { getAllJobRequests, completeJob, getCustomersByIds } from '../../services/api';
 import JobCard from './JobCard';
 import Icon from '../Icon';
