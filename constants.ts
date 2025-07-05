@@ -1,4 +1,3 @@
-
 import { Artisan, Customer, UserRole, ServiceCategory, JobRequest, JobStatus, Bid, Review } from './types';
 
 export let sampleCustomers: Customer[] = [
@@ -106,6 +105,10 @@ const bidsForJob2: Bid[] = [
     { id: 'bid3', artisanId: 'art2', jobRequestId: 'job2', amount: 450, timestamp: Date.now() - 1000 * 60 * 15 },
 ];
 
+const bidsForJob5: Bid[] = [
+    { id: 'bid4', artisanId: 'art1', jobRequestId: 'job5', amount: 150, timestamp: Date.now() - 1000 * 60 * 60 * 24 * 3 },
+];
+
 
 export let sampleJobRequests: JobRequest[] = [
   {
@@ -176,5 +179,37 @@ export let sampleJobRequests: JobRequest[] = [
         raisedAt: Date.now() - 1000 * 60 * 60 * 24,
         status: 'open',
     }
+  },
+  {
+    id: 'job5',
+    customerId: 'cust1',
+    category: ServiceCategory.Plumbing,
+    description: 'Fixed the bathroom shower head replacement. Great work completed!',
+    location: 'Maarif, Casablanca',
+    proposedPrice: 150,
+    status: JobStatus.Completed,
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 2,
+    bids: bidsForJob5,
+    acceptedArtisanId: 'art1',
+    chatHistory: [],
+    paymentStatus: 'released',
+    escrowAmount: 150,
+    isReviewed: false,
+  },
+  {
+    id: 'job6',
+    customerId: 'cust1',
+    category: ServiceCategory.Electricity,
+    description: 'Installed new power outlet in the garage. Excellent service and clean work.',
+    location: 'Maarif, Casablanca', 
+    proposedPrice: 300,
+    status: JobStatus.Completed,
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 5,
+    bids: [],
+    acceptedArtisanId: 'art2',
+    chatHistory: [],
+    paymentStatus: 'released',
+    escrowAmount: 300,
+    isReviewed: true, // This one already has a review
   },
 ];

@@ -17,7 +17,7 @@ const ArtisanDashboard: React.FC<ArtisanDashboardProps> = ({ artisan, notificati
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [activeTab, setActiveTab] = useState<'available' | 'bids' | 'inProgress' | 'completed' | 'disputed'>('available');
 
-  const [categoryFilter, setCategoryFilter] = useState<string>('');
+  const [categoryFilter] = useState<string>('');
   const [sortOrder, setSortOrder] = useState<'newest' | 'priceHigh'>('newest');
   const [isUpdating, setIsUpdating] = useState<string | null>(null); // Store job ID being updated
   const { addToast } = useToast();
@@ -188,7 +188,6 @@ const ArtisanDashboard: React.FC<ArtisanDashboardProps> = ({ artisan, notificati
           <div className="space-y-4">
             {inProgressJobs.length > 0 ? (
               inProgressJobs.map(job => {
-                const acceptedBid = job.bids.find(b => b.artisanId === artisan.id);
                 const customer = customers.find(c => c.id === job.customerId);
                 return (
                   <div key={job.id} className="bg-white rounded-lg shadow-md p-4 flex flex-col sm:flex-row justify-between items-start gap-4">

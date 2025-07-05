@@ -1,6 +1,6 @@
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { ChatMessage, Artisan, Customer, JobRequest, ServiceCategory } from '../../types';
+import { ChatMessage, Artisan, Customer, JobRequest } from '../../types';
 import { getArtisanChatReply } from '../../services/geminiService';
 import { addChatMessageToJob } from '../../services/api';
 import Icon from '../Icon';
@@ -12,7 +12,7 @@ interface ChatWindowProps {
   onClose: () => void;
 }
 
-const ChatWindow: React.FC<ChatWindowProps> = ({ job, customer, artisan, onClose }) => {
+const ChatWindow: React.FC<ChatWindowProps> = ({ job, artisan, onClose }) => {
   const [messages, setMessages] = useState<ChatMessage[]>(job.chatHistory || []);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);

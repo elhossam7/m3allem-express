@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { UserRole, Artisan, Customer, Notification } from './types';
 import Header from './components/Header';
-import CustomerDashboard from './components/customer/CustomerDashboard';
+import CustomerDashboard from './components/customer/CustomerDashboard-improved';
 import ArtisanDashboard from './components/artisan/ArtisanDashboard';
 import ArtisanProfilePage from './components/artisan/ArtisanProfilePage';
 import AuthPage from './components/auth/AuthPage';
@@ -11,6 +11,9 @@ import ArtisanProfileEditPage from './components/artisan/ArtisanProfileEditPage'
 import { ToastProvider, useToast } from './contexts/ToastContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { QueryProvider } from './providers/QueryProvider';
+import ErrorBoundary from './components/shared/ErrorBoundary';
+import './i18n';
 
 const AppContent: React.FC = () => {
   const { currentUser, login, logout, updateUser } = useAuth();
@@ -108,15 +111,19 @@ const AppContent: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <ToastProvider>
-      <NotificationProvider>
-        <AuthProvider>
-          <Router>
-            <AppContent />
-          </Router>
-        </AuthProvider>
-      </NotificationProvider>
-    </ToastProvider>
+    <ErrorBoundary>
+      <QueryProvider>
+        <ToastProvider>
+          <NotificationProvider>
+            <AuthProvider>
+              <Router>
+                <AppContent />
+              </Router>
+            </AuthProvider>
+          </NotificationProvider>
+        </ToastProvider>
+      </QueryProvider>
+    </ErrorBoundary>
   );
 };
 

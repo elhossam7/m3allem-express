@@ -4,6 +4,7 @@ import { User, Notification } from '../types';
 import Icon from './Icon';
 import { useNotifications } from '../contexts/NotificationContext';
 import NotificationPanel from './shared/NotificationPanel';
+import LanguageSwitcher from './shared/LanguageSwitcher';
 
 
 interface HeaderProps {
@@ -74,6 +75,7 @@ const Header: React.FC<HeaderProps> = ({ currentUser, onLogout, onNavigate, onNo
             </h1>
           </div>
           <div className="relative flex items-center gap-4">
+            <LanguageSwitcher />
             {currentUser && (
               <>
                 <div ref={notificationsRef}>

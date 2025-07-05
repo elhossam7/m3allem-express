@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { Customer, User } from '../../types';
 import { updateCustomerProfile } from '../../services/api';
-import Icon from '../Icon';
 import { useToast } from '../../contexts/ToastContext';
 
 interface CustomerProfilePageProps {

@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Customer, JobRequest, JobStatus, Notification } from '../../types';
+import { Customer, JobRequest, JobStatus, Artisan, Notification } from '../../types';
 import JobRequestForm from './JobRequestForm';
 import JobStatusView from './JobStatusView';
+import LeaveReview from './LeaveReview';
 import AdvancedSearch from '../shared/AdvancedSearch';
 import { useJobRequests, useCreateJobRequest } from '../../hooks/useJobRequests';
+import { useSubmitReview } from '../../hooks/useReview';
 import { useWebSocket, useJobUpdates } from '../../hooks/useWebSocket';
 import { useLocalization } from '../../hooks/useLocalization';
-import { getJobById } from '../../services/api';
+import { getArtisansByIds, getJobById } from '../../services/api';
 import { SearchFiltersData } from '../../schemas/validationSchemas';
 
 interface CustomerDashboardProps {
@@ -19,19 +21,30 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user, notificatio
   const [isCreatingJob, setIsCreatingJob] = useState(false);
   const [selectedJob, setSelectedJob] = useState<JobRequest | null>(null);
   const [showSearch, setShowSearch] = useState(false);
+  
+  // State for the review modal
+  const [reviewingJob, setReviewingJob] = useState<JobRequest | null>(null);
+  const [artisanForReview, setArtisanForReview] = useState<Artisan | null>(null);
 
+  // Use React Query for data fetching
   const { data: jobRequests = [], isLoading, refetch } = useJobRequests(user.id);
   const createJobMutation = useCreateJobRequest();
+  const submitReviewMutation = useSubmitReview();
 
+  // WebSocket for real-time updates
   const { isConnected } = useWebSocket();
+  
+  // Internationalization
   const { t } = useLocalization();
 
+  // Handle real-time job updates
   useJobUpdates(selectedJob?.id || '', (update) => {
     if (update.type === 'status_change') {
-      refetch();
+      refetch(); // Refetch jobs when status changes
     }
   });
 
+  // Effect to handle navigation from notifications
   useEffect(() => {
     const handleLink = async () => {
       if (notificationLink && notificationLink.view === 'job' && notificationLink.jobId) {
@@ -45,6 +58,22 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user, notificatio
     handleLink();
   }, [notificationLink, onLinkConsumed, user.id]);
 
+  // Effect to fetch artisan details when review modal is opened
+  useEffect(() => {
+    const fetchArtisanForReview = async () => {
+      if (reviewingJob && reviewingJob.acceptedArtisanId) {
+        setArtisanForReview(null);
+        const artisans = await getArtisansByIds([reviewingJob.acceptedArtisanId]);
+        if (artisans.length > 0) {
+          setArtisanForReview(artisans[0]);
+        }
+      } else {
+        setArtisanForReview(null);
+      }
+    };
+    fetchArtisanForReview();
+  }, [reviewingJob]);
+
   const handleJobSubmit = async (jobData: any) => {
     try {
       await createJobMutation.mutateAsync({ customerId: user.id, jobData });
@@ -56,11 +85,40 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user, notificatio
   };
 
   const handleSearchFilters = (filters: SearchFiltersData) => {
+    // TODO: Implement filtered search logic
     console.log('Search filters:', filters);
   };
 
   const handleResetSearch = () => {
+    // TODO: Reset search filters
     console.log('Reset search filters');
+  };
+
+  const handleReviewSubmit = async (rating: number, comment: string) => {
+    if (!reviewingJob || !reviewingJob.acceptedArtisanId) {
+      throw new Error('Cannot submit review: No job or artisan selected');
+    }
+
+    try {
+      await submitReviewMutation.mutateAsync({
+        artisanId: reviewingJob.acceptedArtisanId,
+        customerId: user.id,
+        jobId: reviewingJob.id,
+        rating,
+        comment
+      });
+      
+      // Update the job's isReviewed status locally
+      if (selectedJob && selectedJob.id === reviewingJob.id) {
+        setSelectedJob({ ...selectedJob, isReviewed: true });
+      }
+      
+      setReviewingJob(null);
+      refetch();
+    } catch (error) {
+      console.error('Failed to submit review:', error);
+      throw error; // Re-throw to let the LeaveReview component handle the error display
+    }
   };
 
   if (isLoading) {
@@ -82,11 +140,23 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user, notificatio
 
   if (selectedJob) {
     return (
-      <JobStatusView
-        jobRequest={selectedJob}
-        onBack={() => setSelectedJob(null)}
-        onRefreshJob={() => refetch()}
-      />
+      <>
+        <JobStatusView
+          jobRequest={selectedJob}
+          onBack={() => { setSelectedJob(null); setReviewingJob(null); }}
+          onRefreshJob={() => refetch()}
+          onReview={(job) => setReviewingJob(job)}
+        />
+        {/* Show review modal when reviewingJob is set */}
+        {reviewingJob && artisanForReview && (
+          <LeaveReview
+            job={reviewingJob}
+            artisan={artisanForReview}
+            onSubmit={handleReviewSubmit}
+            onClose={() => setReviewingJob(null)}
+          />
+        )}
+      </>
     );
   }
 
@@ -149,7 +219,7 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user, notificatio
                 <div
                   key={job.id}
                   className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
-                  onClick={() => setSelectedJob(job)}
+                  onClick={() => { setReviewingJob(null); setSelectedJob(job); }}
                 >
                   <div className="flex justify-between items-start">
                     <div>

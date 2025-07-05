@@ -162,7 +162,7 @@ export const processPayment = (jobRequestId: string): Promise<JobRequest> => {
     });
 };
 
-const releasePayment = (jobRequestId: string): Promise<JobRequest> => {
+export const releasePayment = (jobRequestId: string): Promise<JobRequest> => {
     // This is an internal function for our simulation
     return new Promise((resolve, reject) => {
         setTimeout(() => {

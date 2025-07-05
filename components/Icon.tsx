@@ -1,7 +1,7 @@
 
 import React from 'react';
 
-export type IconName = 'star' | 'check-verified' | 'location' | 'send' | 'briefcase' | 'receipt' | 'user-circle' | 'check-circle' | 'x-circle' | 'information-circle' | 'x-mark' | 'trophy' | 'lightning-bolt' | 'credit-card' | 'lock-closed' | 'bell' | 'shield-exclamation';
+export type IconName = 'star' | 'check-verified' | 'location' | 'send' | 'briefcase' | 'receipt' | 'user-circle' | 'check-circle' | 'x-circle' | 'information-circle' | 'x-mark' | 'trophy' | 'lightning-bolt' | 'credit-card' | 'lock-closed' | 'bell' | 'shield-exclamation' | 'chevron-up' | 'chevron-down' | 'spinner' | 'clock';
 
 interface IconProps {
   name: IconName;
@@ -100,6 +100,27 @@ const ICONS: Record<IconName, React.ReactNode> = {
   'lock-closed': (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
         <path fillRule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z" clipRule="evenodd" />
+    </svg>
+  ),
+  'chevron-up': (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+      <path fillRule="evenodd" d="M11.47 7.72a.75.75 0 011.06 0l7.5 7.5a.75.75 0 11-1.06 1.06L12 9.31l-6.97 6.97a.75.75 0 01-1.06-1.06l7.5-7.5z" clipRule="evenodd" />
+    </svg>
+  ),
+  'chevron-down': (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+      <path fillRule="evenodd" d="M12.53 16.28a.75.75 0 01-1.06 0l-7.5-7.5a.75.75 0 111.06-1.06L12 14.69l6.97-6.97a.75.75 0 111.06 1.06l-7.5 7.5z" clipRule="evenodd" />
+    </svg>
+  ),
+  spinner: (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25" />
+      <path fill="currentColor" d="m12 2v4m0 12v4m10-10h-4M6 12H2m15.364-7.364l-2.828 2.828M9.464 9.464L6.636 6.636m12.728 12.728l-2.828-2.828M9.464 14.536l-2.828 2.828" className="opacity-75 animate-spin" />
+    </svg>
+  ),
+  clock: (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+      <path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clipRule="evenodd" />
     </svg>
   ),
 };

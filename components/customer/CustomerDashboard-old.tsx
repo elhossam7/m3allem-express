@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Customer, JobRequest, JobStatus, Notification } from '../../types';
+import { Customer, JobRequest, JobStatus, Artisan, Notification } from '../../types';
 import JobRequestForm from './JobRequestForm';
 import JobStatusView from './JobStatusView';
+import ReviewForm from './ReviewForm';
 import AdvancedSearch from '../shared/AdvancedSearch';
-import { useJobRequests, useCreateJobRequest } from '../../hooks/useJobRequests';
+import { useJobRequests, useCreateJobRequest, useAddReview } from '../../hooks/useJobRequests';
 import { useWebSocket, useJobUpdates } from '../../hooks/useWebSocket';
 import { useLocalization } from '../../hooks/useLocalization';
-import { getJobById } from '../../services/api';
+import { getArtisansByIds, getJobById } from '../../services/api';
 import { SearchFiltersData } from '../../schemas/validationSchemas';
 
 interface CustomerDashboardProps {
@@ -19,19 +20,30 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user, notificatio
   const [isCreatingJob, setIsCreatingJob] = useState(false);
   const [selectedJob, setSelectedJob] = useState<JobRequest | null>(null);
   const [showSearch, setShowSearch] = useState(false);
+  
+  // State for the review modal
+  const [reviewingJob, setReviewingJob] = useState<JobRequest | null>(null);
+  const [artisanForReview, setArtisanForReview] = useState<Artisan | null>(null);
 
+  // Use React Query for data fetching
   const { data: jobRequests = [], isLoading, refetch } = useJobRequests(user.id);
   const createJobMutation = useCreateJobRequest();
+  const addReviewMutation = useAddReview();
 
+  // WebSocket for real-time updates
   const { isConnected } = useWebSocket();
+  
+  // Internationalization
   const { t } = useLocalization();
 
+  // Handle real-time job updates
   useJobUpdates(selectedJob?.id || '', (update) => {
     if (update.type === 'status_change') {
-      refetch();
+      refetch(); // Refetch jobs when status changes
     }
   });
 
+  // Effect to handle navigation from notifications
   useEffect(() => {
     const handleLink = async () => {
       if (notificationLink && notificationLink.view === 'job' && notificationLink.jobId) {
@@ -45,6 +57,22 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user, notificatio
     handleLink();
   }, [notificationLink, onLinkConsumed, user.id]);
 
+  // Effect to fetch artisan details when review modal is opened
+  useEffect(() => {
+    const fetchArtisanForReview = async () => {
+      if (reviewingJob && reviewingJob.acceptedArtisanId) {
+        setArtisanForReview(null);
+        const artisans = await getArtisansByIds([reviewingJob.acceptedArtisanId]);
+        if (artisans.length > 0) {
+          setArtisanForReview(artisans[0]);
+        }
+      } else {
+        setArtisanForReview(null);
+      }
+    };
+    fetchArtisanForReview();
+  }, [reviewingJob]);
+
   const handleJobSubmit = async (jobData: any) => {
     try {
       await createJobMutation.mutateAsync({ customerId: user.id, jobData });
@@ -56,11 +84,31 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user, notificatio
   };
 
   const handleSearchFilters = (filters: SearchFiltersData) => {
+    // TODO: Implement filtered search logic
     console.log('Search filters:', filters);
   };
 
   const handleResetSearch = () => {
+    // TODO: Reset search filters
     console.log('Reset search filters');
+  };
+
+  const handleReviewSubmit = async (rating: number, comment: string) => {
+    if (reviewingJob && reviewingJob.acceptedArtisanId) {
+      try {
+        await addReviewMutation.mutateAsync({
+          artisanId: reviewingJob.acceptedArtisanId,
+          customerId: user.id,
+          jobId: reviewingJob.id,
+          rating,
+          comment
+        });
+        setReviewingJob(null);
+        refetch();
+      } catch (error) {
+        console.error('Failed to submit review:', error);
+      }
+    }
   };
 
   if (isLoading) {
@@ -182,6 +230,20 @@ const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ user, notificatio
           )}
         </div>
       </div>
+
+      {/* Review Modal */}
+      {reviewingJob && artisanForReview && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <ReviewForm
+              job={reviewingJob}
+              artisan={artisanForReview}
+              onSubmit={handleReviewSubmit}
+              onCancel={() => setReviewingJob(null)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

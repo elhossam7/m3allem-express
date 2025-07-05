@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { User, UserRole, ServiceCategory } from '../../types';
 import { login, signup } from '../../services/api';
-import Icon from '../Icon';
 
 interface AuthPageProps {
   onAuthSuccess: (user: User) => void;
@@ -39,12 +38,6 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
       setIsLoading(false);
     }
   };
-  
-  const handleToggleView = () => {
-    setIsLoginView(!isLoginView);
-    setError(null);
-  };
-
 
   return (
     <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
